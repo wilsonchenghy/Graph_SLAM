@@ -15,7 +15,7 @@ class Pose2D:
     theta: float = 0.0
 
     def to_matrix(self) -> np.ndarray:
-        """Convert to homogeneous transformation matrix (3x3 for SE2)"""
+        """Pose2D to Homogeneous transformation matrix (3x3 for SE2)"""
         c = math.cos(self.theta)
         s = math.sin(self.theta)
         return np.array([
@@ -25,7 +25,7 @@ class Pose2D:
         ])
 
     def inverse(self) -> 'Pose2D':
-        """Compute inverse transformation T_inv"""
+        """Inverse transformation T_inv"""
         c = math.cos(self.theta)
         s = math.sin(self.theta)
         inv_x = -c * self.x - s * self.y
@@ -33,7 +33,7 @@ class Pose2D:
         return Pose2D(inv_x, inv_y, -self.theta)
 
     def compose(self, other: 'Pose2D') -> 'Pose2D':
-        """Compose two 2D poses (T_AB = T_A * T_B)"""
+        """T_AB = T_A * T_B"""
         T_self = self.to_matrix()
         T_other = other.to_matrix()
         T_composed = T_self @ T_other
@@ -45,30 +45,20 @@ class Pose2D:
 
     @staticmethod
     def from_matrix(matrix: np.ndarray) -> 'Pose2D':
-        """Convert homogeneous transformation matrix to Pose2D"""
+        """Homogeneous transformation matrix to Pose2D"""
         x = matrix[0, 2]
         y = matrix[1, 2]
         theta = math.atan2(matrix[1, 0], matrix[0, 0])
         return Pose2D(x, y, theta)
 
     def adjoint(self) -> np.ndarray:
-        """
-        Compute the Adjoint matrix (Ad(T)) for a Pose2D (SE(2) element).
-        Ad(T) maps twists from T's body frame to the world frame.
-        For T = [R t; 0 1] in SE(2), where R is 2x2 rotation and t is 2x1 translation.
-        Ad(T) = [[R, hat(t)R], [0, R]] (This is the 6x6 for SE(3). For SE(2) it's 3x3).
-        A common form for SE(2) is:
-        Ad(T) = [[cos(theta), -sin(theta),  y],
-                 [sin(theta),  cos(theta), -x],
-                 [0,           0,           1]]
-        """
+        """Ad(T) in SE(2)"""
         c = math.cos(self.theta)
         s = math.sin(self.theta)
-        x, y = self.x, self.y
         
         return np.array([
-            [c, -s,  y],
-            [s,  c, -x],
+            [c, -s,  self.y],
+            [s,  c, -self.x],
             [0,  0,  1]
         ])
 
