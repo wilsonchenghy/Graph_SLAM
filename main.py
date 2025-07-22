@@ -65,7 +65,7 @@ class Pose2D:
     @staticmethod
     def exp(xi: np.ndarray) -> 'Pose2D':
         """
-        Exponential map from se(2) (twist vector xi) to SE(2) (Pose2D).
+        se(2) (twist vector xi) to SE(2) (Pose2D)
         xi = [dx, dy, dtheta]
         """
         dx, dy, dtheta = xi
@@ -88,7 +88,7 @@ class Pose2D:
 
     def log(self) -> np.ndarray:
         """
-        Logarithm map from SE(2) (Pose2D) to se(2) (twist vector xi).
+        SE(2) (Pose2D) to se(2) (twist vector xi)
         Returns [dx, dy, dtheta]
         """
         x, y, theta = self.x, self.y, self.theta
@@ -416,7 +416,7 @@ def run_slam_demo():
         (Pose2D(1, 0, 0), 10), 
         (Pose2D(0, 0, np.radians(90)), 5), 
         (Pose2D(1, 0, 0), 10), 
-        (Pose2D(0, 0, np.radians(90)), 5), 
+        (Pose2D(0, 0, np.radians(90)), 6), 
     ]
     
     np.random.seed(2)
