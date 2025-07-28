@@ -402,7 +402,8 @@ def run_slam_demo():
     initial_covariance = np.diag([0.01, 0.01, np.radians(1)])**2 
 
     graph_builder = GraphBuilder(initial_pose, initial_covariance)
-    # loop_detector = LoopClosureDetector(graph_builder.pose_graph, distance_threshold=2.5)
+    
+    loop_detector = LoopClosureDetector(graph_builder.pose_graph, distance_threshold=2.5)
 
     odom_uncertainty = np.diag([0.1, 0.1, np.radians(5)])**2 
 
@@ -430,6 +431,21 @@ def run_slam_demo():
                 rel_pose_template.theta + np.random.normal(0, odom_noise_scale / 5.0) 
             )
             graph_builder.add_odometry_measurement(noisy_rel_pose, odom_uncertainty)
+
+            # # Detect loop closure for the newest pose
+            # current_pose_id = graph_builder.current_pose_id
+            # loop_closure = loop_detector.detect_potential_loop_closure(current_pose_id)
+            # if loop_closure is not None:
+            #     # information = np.diag([1.0, 1.0, 0.1])**(-2) * 10  # tune confidence
+            #     information = np.diag([1.0, 1.0, 100.0]) * 10
+            #     graph_builder.pose_graph.add_edge(
+            #         loop_closure.from_id,
+            #         loop_closure.to_id,
+            #         loop_closure.relative_transform,
+            #         information,
+            #         edge_type="loop_closure"
+            #     )
+            #     print(f"Added loop closure edge: {loop_closure.from_id} -> {loop_closure.to_id}")
 
     print(f"Initial graph built with {len(graph_builder.pose_graph.nodes)} poses and "
           f"{len(graph_builder.pose_graph.edges)} odometry edges.")
