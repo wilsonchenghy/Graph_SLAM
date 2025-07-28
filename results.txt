@@ -1,0 +1,49 @@
+Starting Graph SLAM Demonstration...
+
+Simulating robot movement and adding odometry...
+Initial graph built with 62 poses and 61 odometry edges.
+
+Adding a simulated loop closure constraint...
+Added loop closure edge from node 61 to node 0.
+
+Starting Graph Optimization (Gauss-Newton)...
+Iteration 0: Current error: 14.2928
+Iteration 1: Current error: 12.5862
+Iteration 2: Current error: 10.0756
+Iteration 3: Current error: 6.4561
+Iteration 4: Current error: 3.7806
+Iteration 5: Current error: 2.7027
+Iteration 6: Current error: 2.0843
+Iteration 7: Current error: 1.5893
+Iteration 8: Current error: 1.1365
+Iteration 9: Current error: 0.8391
+Iteration 10: Current error: 0.6804
+Iteration 11: Current error: 0.5733
+Iteration 12: Current error: 0.4879
+Iteration 13: Current error: 0.4221
+Iteration 14: Current error: 0.3819
+Iteration 15: Current error: 0.3588
+Iteration 16: Current error: 0.3410
+Iteration 17: Current error: 0.3263
+Iteration 18: Current error: 0.3159
+Iteration 19: Current error: 0.3105
+Iteration 20: Current error: 0.3076
+Iteration 21: Current error: 0.3046
+Iteration 22: Current error: 0.3018
+Iteration 23: Current error: 0.3000
+Iteration 24: Current error: 0.2995
+Iteration 25: Current error: 0.2993
+Iteration 26: Current error: 0.2987
+Iteration 27: Current error: 0.2981
+Iteration 28: Current error: 0.2978
+Iteration 29: Current error: 0.2979
+Iteration 30: Current error: 0.2979
+Iteration 31: Current error: 0.2978
+Iteration 32: Current error: 0.2976
+Iteration 33: Current error: 0.2975
+Iteration 34: Current error: 0.2976
+Iteration 35: Current error: 0.2976
+Iteration 36: Current error: 0.2976
+Iteration 37: Current error: 0.2975
+Iteration 38: Current error: 0.2975
+Converged after 38 iterations. Final error: 0.2975
