@@ -198,48 +198,6 @@ class GraphBuilder:
         self.current_pose_id = new_pose_id
 
 
-# Loop Closure Detection
-@dataclass
-class LoopClosure:
-    from_id: int
-    to_id: int
-    relative_transform: Pose2D 
-
-class LoopClosureDetector:
-    def __init__(self, pose_graph: PoseGraph, distance_threshold: float = 2.0):
-        self.pose_graph = pose_graph
-        self.distance_threshold = distance_threshold
-        self.kdtree = None 
-
-    def _update_spatial_index(self) -> None:
-        poses_xy = np.array([[pose.x, pose.y] for pose in self.pose_graph.nodes])
-        self.kdtree = KDTree(poses_xy)
-
-    def detect_potential_loop_closure(self, current_pose_id: int) -> Optional[LoopClosure]:
-        current_pose = self.pose_graph.nodes[current_pose_id]
-        
-        self._update_spatial_index()
-
-        query_point = np.array([current_pose.x, current_pose.y])
-        nearby_indices = self.kdtree.query_ball_point(query_point, self.distance_threshold)
-        
-        candidate_loop_ids = [
-            idx for idx in nearby_indices 
-            if abs(current_pose_id - idx) > 50 and idx < current_pose_id
-        ]
-        
-        if candidate_loop_ids:
-            matched_id = candidate_loop_ids[0]
-            matched_pose = self.pose_graph.nodes[matched_id]
-
-            relative_transform_matrix = matched_pose.inverse().to_matrix() @ current_pose.to_matrix()
-            relative_transform = Pose2D.from_matrix(relative_transform_matrix)
-
-            print(f"Loop closure detected: {current_pose_id} to {matched_id}")
-            return LoopClosure(matched_id, current_pose_id, relative_transform)
-        return None
-
-
 def normalize_angle(theta):
     return (theta + np.pi) % (2 * np.pi) - np.pi
 
@@ -389,6 +347,12 @@ class SLAMVisualizer:
             
             self.ax.plot([p1.x, p2.x], [p1.y, p2.y], color=color, linestyle=line_style, alpha=alpha, linewidth=0.5)
 
+        # orientation arrows
+        for pose in self.pose_graph.nodes:
+            dx = 0.2 * math.cos(pose.theta)
+            dy = 0.2 * math.sin(pose.theta)
+            self.ax.arrow(pose.x, pose.y, dx, dy, head_width=0.05, fc='k', ec='k')
+        
         self.ax.legend()
         self.ax.set_xlabel("X Position (m)")
         self.ax.set_ylabel("Y Position (m)")
@@ -403,8 +367,6 @@ def run_slam_demo():
 
     graph_builder = GraphBuilder(initial_pose, initial_covariance)
     
-    loop_detector = LoopClosureDetector(graph_builder.pose_graph, distance_threshold=2.5)
-
     odom_uncertainty = np.diag([0.1, 0.1, np.radians(5)])**2 
 
     # Simulated Path with noise
@@ -431,21 +393,6 @@ def run_slam_demo():
                 rel_pose_template.theta + np.random.normal(0, odom_noise_scale / 5.0) 
             )
             graph_builder.add_odometry_measurement(noisy_rel_pose, odom_uncertainty)
-
-            # # Detect loop closure for the newest pose
-            # current_pose_id = graph_builder.current_pose_id
-            # loop_closure = loop_detector.detect_potential_loop_closure(current_pose_id)
-            # if loop_closure is not None:
-            #     # information = np.diag([1.0, 1.0, 0.1])**(-2) * 10  # tune confidence
-            #     information = np.diag([1.0, 1.0, 100.0]) * 10
-            #     graph_builder.pose_graph.add_edge(
-            #         loop_closure.from_id,
-            #         loop_closure.to_id,
-            #         loop_closure.relative_transform,
-            #         information,
-            #         edge_type="loop_closure"
-            #     )
-            #     print(f"Added loop closure edge: {loop_closure.from_id} -> {loop_closure.to_id}")
 
     print(f"Initial graph built with {len(graph_builder.pose_graph.nodes)} poses and "
           f"{len(graph_builder.pose_graph.edges)} odometry edges.")
