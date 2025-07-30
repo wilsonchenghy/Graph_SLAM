@@ -348,10 +348,10 @@ class SLAMVisualizer:
             self.ax.plot([p1.x, p2.x], [p1.y, p2.y], color=color, linestyle=line_style, alpha=alpha, linewidth=0.5)
 
         # orientation arrows
-        for pose in self.pose_graph.nodes:
-            dx = 0.2 * math.cos(pose.theta)
-            dy = 0.2 * math.sin(pose.theta)
-            self.ax.arrow(pose.x, pose.y, dx, dy, head_width=0.05, fc='k', ec='k')
+        # for pose in self.pose_graph.nodes:
+        #     dx = 0.2 * math.cos(pose.theta)
+        #     dy = 0.2 * math.sin(pose.theta)
+        #     self.ax.arrow(pose.x, pose.y, dx, dy, head_width=0.05, fc='k', ec='k')
         
         self.ax.legend()
         self.ax.set_xlabel("X Position (m)")
